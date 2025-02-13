@@ -1,14 +1,14 @@
 import './style.css';
 
-import { TaskManager } from './modules/taskManager.js';
+import TaskManager from './modules/taskManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const taskManager = new TaskManager('task-list', 'task-input');
-  
+
   // Add task button handler
   const addTaskBtn = document.getElementById('add-task-btn');
   const taskInput = document.getElementById('task-input');
-  
+
   addTaskBtn?.addEventListener('click', () => {
     taskManager.addTask(taskInput.value);
     taskInput.value = '';

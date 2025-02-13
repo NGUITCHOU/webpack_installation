@@ -1,6 +1,6 @@
-import { storage } from './storage.js';
+import storage from './storage.js';
 
-export class TaskManager {
+export default class TaskManager {
   constructor(taskListId, taskInputId) {
     this.taskList = document.getElementById(taskListId);
     this.taskInput = document.getElementById(taskInputId);
@@ -11,6 +11,7 @@ export class TaskManager {
   createTaskElement(task) {
     const li = document.createElement('li');
     li.setAttribute('draggable', 'true');
+    li.addEventListener('click', this.storage);
     li.innerHTML = `
       <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
       <span class="task-text" contenteditable="false">${task.text}</span>
@@ -24,15 +25,15 @@ export class TaskManager {
 
   loadTasks() {
     const tasks = storage.loadTasks();
-    tasks.forEach(task => {
+    tasks.forEach((task) => {
       this.taskList.appendChild(this.createTaskElement(task));
     });
   }
 
   saveTasks() {
-    const tasks = Array.from(this.taskList.children).map(li => ({
+    const tasks = Array.from(this.taskList.children).map((li) => ({
       text: li.querySelector('.task-text').textContent,
-      completed: li.querySelector('.task-checkbox').checked
+      completed: li.querySelector('.task-checkbox').checked,
     }));
     storage.saveTasks(tasks);
   }
@@ -53,7 +54,7 @@ export class TaskManager {
   handleEdit(button) {
     const li = button.closest('li');
     const taskText = li.querySelector('.task-text');
-    
+
     if (taskText.contentEditable === 'false') {
       taskText.contentEditable = 'true';
       taskText.focus();
@@ -97,7 +98,7 @@ export class TaskManager {
   handleDrop(e) {
     e.preventDefault();
     if (e.target.tagName === 'LI') {
-      const target = e.target;
+      const { target } = e;
       const draggedItem = this.taskList.querySelector('li[draggable]');
       if (target !== draggedItem) {
         const items = Array.from(this.taskList.children);
@@ -125,7 +126,7 @@ export class TaskManager {
 
   clearCompleted() {
     const completedTasks = this.taskList.querySelectorAll('.task-checkbox:checked');
-    completedTasks.forEach(checkbox => {
+    completedTasks.forEach((checkbox) => {
       const li = checkbox.closest('li');
       if (li) this.taskList.removeChild(li);
     });
